@@ -1,0 +1,3 @@
+It is example sentence.
+I love programming and learning.
+Rust is very interesting language!

@@ -1,0 +1,269 @@
+import { Button, VerticalBox, GridBox, LineEdit, HorizontalBox } from "std-widgets.slint";
+
+
+component AppText inherits Text {
+    horizontal-alignment: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: white;   
+}
+
+component KeyboardButton inherits Rectangle {
+    in property <string> text;
+    in property <color> bcolor;
+
+    in-out property <bool> is_pressed: false;
+
+    Text {
+        text: text;
+        horizontal-alignment: center;
+        color: white;
+        font-size: 16px;
+
+    }
+    border-color: bcolor;
+    background: is_pressed ? white:black;
+    animate background {
+         duration: 200ms;
+    }
+    border-width: 1px;
+    width: 32px; height: 32px;
+}
+
+export component AppWindow inherits Window {
+
+    in-out property <string> char;
+    in-out property <string> event;
+    in-out property <bool> is_correct_event: true;
+
+    in-out property <int> count_correct: 0;
+    in-out property <int> count_incorrect: 0;
+
+    in-out property <bool> is_main_mode: true;
+    in-out property <bool> is_char_mode: false;
+    in-out property <bool> is_sentence_mode: false;
+
+    in-out property <string> correct_sentence;
+    in-out property <string> input_sentence;
+    in-out property <string> edit_string;
+    in-out property <string> keyboard_event;
+    in-out property <bool> is_correct_sentence;
+
+    callback key_accept();
+
+    callback sentence_accept();
+    callback keyboard_key_accept();
+
+
+    width: 1000px;
+    height: 500px;
+
+    VerticalBox {
+
+        visible: is_main_mode ? true:false;
+
+        Text {
+            AppText {text: "Main";}
+        }
+
+        Button {
+            text: "CharMode";
+
+            clicked => {
+                root.is_main_mode = false;
+                root.is_char_mode = true;
+                input_ch.focus();
+            }
+        }
+
+        Button {
+            text: "SentenceMode";
+
+            clicked => {
+                root.is_main_mode = false;
+                root.is_sentence_mode = true;
+                input_sent.focus();
+            }
+        }
+    }
+
+    VerticalLayout {
+        visible: is_sentence_mode ? true:false;
+
+        AppText {text: "\{root.correct_sentence}";}
+
+        input_sent := LineEdit {
+
+            horizontal-alignment: center;
+            font-size: 16px;
+            width: 400px;
+            height: 20px;
+            x: 300px;
+            padding: 20px;
+            placeholder-text: "Enter text here";
+
+            accepted(sentence) => {
+                root.input_sentence = sentence;
+                sentence_accept();
+                if (is_correct_sentence == true) {
+                    self.text = "";
+                }
+            }
+            edited(edit_string) => {
+                root.edit_string = edit-string;
+                keyboard_key_accept()
+            }
+        }
+
+        VerticalBox {
+
+            x: 228px;
+
+            HorizontalLayout {
+                spacing: 5px;
+
+                KeyboardButton {text: "`"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "1"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "2"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "3"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "4"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "5"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "6"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "7"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "8"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "9"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "0"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "-"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "="; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "BSpace"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 72px;}
+            }
+            HorizontalLayout {
+                spacing: 5px;
+
+                KeyboardButton {text: "TAB"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 56px;}
+                KeyboardButton {text: "Q"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "W"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "E"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "R"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "T"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "Y"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "U"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "I"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "O"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "P"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "["; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "]"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "\\"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 48px;}
+            }
+            HorizontalLayout {
+                spacing: 5px;
+
+                KeyboardButton {text: "CLock"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 70px;}
+                KeyboardButton {text: "A"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "S"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "D"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "F"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "G"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "H"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "J"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "K"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "L"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: ";"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "'"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "Enter"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 72px;}
+            }
+            HorizontalLayout {
+                spacing: 5px;
+
+                KeyboardButton {text: "LShift"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 90px;}
+                KeyboardButton {text: "Z"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "X"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "C"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "V"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "B"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "N"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "M"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: ","; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "."; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "/"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "RShift"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 90px;}
+            }
+            HorizontalLayout {
+                spacing: 5px;
+
+                KeyboardButton {text: "LCtrl"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 64px;}
+                KeyboardButton {text: "Fn"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "Win"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
+                KeyboardButton {text: "LAlt"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 64px;}
+                KeyboardButton {text: "Space"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 205px;}
+                KeyboardButton {text: "RAlt"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 64px;}
+                KeyboardButton {text: "RCtrl"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 64px;}
+            }
+        }
+
+        AppText {
+            text: "Correct: \{root.count_correct}\nIncorrect: \{root.count_incorrect}";
+        }
+    
+        Button {
+            width: 400px;
+            height: 100px;
+            x: 300px;
+            padding-top: 200px;
+            text: "Exit";
+
+            clicked => {
+                root.is_sentence_mode = false;
+                root.is_main_mode = true;
+                root.sentence_accept();
+            }
+        }
+    }
+    
+    VerticalBox {
+
+        visible: is_char_mode ? true:false;
+        
+
+        AppText {
+            text: "Press button:";
+        }
+
+        AppText {
+            text: "\{root.char}";
+            color: is_correct_event ? white:red;
+            animate color {
+                 duration: 250ms;
+            }
+        }
+        
+        input_ch := FocusScope {       
+
+            key-pressed(event) => {
+                root.event = event.text;
+                if (event.text == Key.Shift || event.text == Key.ShiftR) {
+                    root.event = "Shift";
+                }
+                root.key_accept();
+                accept
+            }
+        }
+        
+        AppText {
+            text: "Correct: \{root.count_correct}\nIncorrect: \{root.count_incorrect}";
+        }
+
+        Button {
+            text: "Exit";
+            height: 100px;
+
+            clicked => {
+                root.is_char_mode = false;
+                root.is_main_mode = true;
+                root.key_accept();
+                root.is_correct_event = true;
+            }
+        }
+
+    }
+}
