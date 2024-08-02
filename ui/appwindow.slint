@@ -92,26 +92,38 @@ export component AppWindow inherits Window {
 
         AppText {text: "\{root.correct_sentence}";}
 
-        input_sent := LineEdit {
+        FocusScope{
+            input_sent := LineEdit {
 
-            horizontal-alignment: center;
-            font-size: 16px;
-            width: 400px;
-            height: 20px;
-            x: 300px;
-            padding: 20px;
-            placeholder-text: "Enter text here";
+                horizontal-alignment: center;
+                font-size: 16px;
+                width: 400px;
+                height: 20px;
+                x: 300px;
+                padding: 20px;
+                placeholder-text: "Enter text here";
 
-            accepted(sentence) => {
-                root.input_sentence = sentence;
-                sentence_accept();
-                if (is_correct_sentence == true) {
-                    self.text = "";
+                accepted(sentence) => {
+                    root.input_sentence = sentence;
+                    sentence_accept();
+                    if (is_correct_sentence == true) {
+                        self.text = "";
+                    }
+                }
+                edited(edit_string) => {
+                    root.edit_string = edit-string;
+                    keyboard_key_accept()
                 }
             }
-            edited(edit_string) => {
-                root.edit_string = edit-string;
-                keyboard_key_accept()
+            key-pressed(event) => {
+                if (event.text == Key.Shift) {
+                    root.keyboard_event = "LShift";
+                }
+                if (event.text == Key.ShiftR) {
+                    root.keyboard_event = "RShift";
+                }
+                
+                accept
             }
         }
 

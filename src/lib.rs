@@ -132,13 +132,12 @@ fn keyboard_visual(ui: AppWindow) {
 
     ui.on_keyboard_key_accept({
         let ui_handle = ui.as_weak();
-
         move || {
 
             let ui = ui_handle.unwrap();
             let edit_string = ui.get_edit_string().to_string();
 
-            if edit_string > last_string {  
+            if edit_string >= last_string {  
                 let mut ch:&str = &edit_string[edit_string.len()-1..].to_uppercase();
 
                 if ch == " " {
