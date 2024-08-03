@@ -36,10 +36,14 @@ fn start_app() {
     }
 
     let mut example_file = fs::File::create("texts/en/example.txt").unwrap();
+    let mut example_file2 = fs::File::create("texts/en/example2.txt").unwrap();
 
     example_file.write_all("It is example sentence.
 I love programming and learning.
 Rust is very interesting language!"
+    .as_bytes()).unwrap();
+
+    example_file2.write_all("It's example sentence from second file!"
     .as_bytes()).unwrap();
 }
 
@@ -171,7 +175,18 @@ fn rand_char() -> String {
 
 fn rand_sentence() -> String {
 
-    let path = "texts/en/example.txt";
+    let en_path = "texts/en/";
+    let mut texts = Vec::new();
+
+    match fs::read_dir(en_path) {
+        Err(why) => println!("! {:?}", why.kind()),
+        Ok(paths) => for path in paths {
+            texts.extend(path)
+        },
+    }
+
+    let file = &texts[thread_rng().gen_range(0..texts.len())];
+    let path:String = format!("{}{}", en_path, file.file_name().into_string().unwrap());
 
     let sentences = fs::read_to_string(path).unwrap();
     let sentences:Vec<&str> = sentences.split("\n").collect();
