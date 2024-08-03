@@ -90,7 +90,7 @@ export component AppWindow inherits Window {
     VerticalLayout {
         visible: is_sentence_mode ? true:false;
 
-        AppText {text: "\{root.correct_sentence}";}
+        AppText {text: "\{root.correct_sentence}"; }
 
         FocusScope{
             input_sent := LineEdit {
@@ -121,6 +121,12 @@ export component AppWindow inherits Window {
                 }
                 if (event.text == Key.ShiftR) {
                     root.keyboard_event = "RShift";
+                }
+                if (event.text == Key.Alt) {
+                    root.keyboard_event = "LAlt";
+                }
+                if (event.text == Key.AltGr) {
+                    root.keyboard_event = "RAlt";
                 }
                 
                 accept
