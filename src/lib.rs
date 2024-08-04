@@ -142,10 +142,10 @@ fn keyboard_visual(ui: AppWindow) {
             let edit_string = ui.get_edit_string().to_string();
 
             if edit_string >= last_string {  
-                let mut ch:&str = &edit_string[edit_string.len()-1..].to_uppercase();
+                let mut ch = edit_string.chars().last().unwrap().to_string().to_uppercase();
 
                 if ch == " " {
-                    ch = "Space";
+                    ch = "Space".to_string();
                 }
 
                 ui.set_keyboard_event(ch.into());
