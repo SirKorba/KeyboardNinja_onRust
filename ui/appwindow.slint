@@ -10,12 +10,14 @@ component AppText inherits Text {
 
 component KeyboardButton inherits Rectangle {
     in property <string> text;
+    in property <string> rutext;
     in property <color> bcolor;
+    in property <string> lang;
 
     in-out property <bool> is_pressed: false;
 
     Text {
-        text: text;
+        text: (root.lang == "en" || root.rutext == "")?text:rutext;
         horizontal-alignment: center;
         color: white;
         font-size: 16px;
@@ -48,11 +50,13 @@ export component AppWindow inherits Window {
     in-out property <string> edit_string;
     in-out property <string> keyboard_event;
     in-out property <bool> is_correct_sentence;
+    in-out property <string> lang: "en";
 
     callback key_accept();
 
     callback sentence_accept();
     callback keyboard_key_accept();
+    callback change_lang();
 
 
     width: 1000px;
@@ -99,7 +103,7 @@ export component AppWindow inherits Window {
                 horizontal-alignment: center;
                 font-size: 16px;
                 width: 400px;
-                height: 20px;
+                height: 30px;
                 x: 300px;
                 padding: 20px;
                 placeholder-text: "Enter text here";
@@ -108,7 +112,7 @@ export component AppWindow inherits Window {
                     root.input_sentence = sentence;
                     sentence_accept();
                     if (is_correct_sentence == true) {
-                        self.text = "";
+                        self.text  = "";
                     }
                 }
                 edited(edit_string) => {
@@ -118,10 +122,7 @@ export component AppWindow inherits Window {
             }
             key-pressed(event) => {
                 if (event.text == Key.Shift) {
-                    root.keyboard_event = "LShift";
-                }
-                if (event.text == Key.ShiftR) {
-                    root.keyboard_event = "RShift";
+                    root.keyboard_event = "Shift";
                 }
                 if (event.text == Key.Alt) {
                     root.keyboard_event = "LAlt";
@@ -134,6 +135,20 @@ export component AppWindow inherits Window {
             }
         }
 
+        Button {
+            text: root.lang;
+            width: 64px;
+            x: 232px;
+            clicked => {
+                if (root.lang == "en") {
+                    root.lang = "ru";
+                } else {
+                    root.lang = "en";
+                }
+                change_lang()
+            }
+        }
+
         VerticalBox {
 
             x: 228px;
@@ -141,82 +156,82 @@ export component AppWindow inherits Window {
             HorizontalLayout {
                 spacing: 5px;
 
-                KeyboardButton {text: "`"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "1"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "2"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "3"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "4"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "5"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "6"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "7"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "8"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "9"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "0"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "-"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "="; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "BSpace"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 72px;}
+                KeyboardButton {lang: root.lang; text: "`"; rutext: "Ё"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext) == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "1"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext) == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "2"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "3"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "4"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "5"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "6"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "7"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "8"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "9"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "0"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "-"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "="; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "BSpace"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false; width: 72px;}
             }
             HorizontalLayout {
                 spacing: 5px;
 
-                KeyboardButton {text: "TAB"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 56px;}
-                KeyboardButton {text: "Q"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "W"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "E"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "R"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "T"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "Y"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "U"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "I"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "O"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "P"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "["; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "]"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "\\"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 48px;}
+                KeyboardButton {lang: root.lang; text: "TAB"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false; width: 56px;}
+                KeyboardButton {lang: root.lang; text: "Q"; rutext: "Й"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "W"; rutext: "Ц"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "E"; rutext: "У"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "R"; rutext: "К"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "T"; rutext: "Е"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "Y"; rutext: "Н"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "U"; rutext: "Г"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "I"; rutext: "Ш"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "O"; rutext: "Щ"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "P"; rutext: "З"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "["; rutext: "Х"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "]"; rutext: "Ъ"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "\\"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false; width: 48px;}
             }
             HorizontalLayout {
                 spacing: 5px;
 
-                KeyboardButton {text: "CLock"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 70px;}
-                KeyboardButton {text: "A"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "S"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "D"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "F"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "G"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "H"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "J"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "K"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "L"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: ";"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "'"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "Enter"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 72px;}
+                KeyboardButton {lang: root.lang; text: "CLock"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false; width: 70px;}
+                KeyboardButton {lang: root.lang; text: "A"; rutext: "Ф"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "S"; rutext: "Ы"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "D"; rutext: "В"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "F"; rutext: "А"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "G"; rutext: "П"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "H"; rutext: "Р"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "J"; rutext: "О"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "K"; rutext: "Л"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "L"; rutext: "Д"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: ";"; rutext: "Ж"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "'"; rutext: "Э"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "Enter"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false; width: 72px;}
             }
             HorizontalLayout {
                 spacing: 5px;
 
-                KeyboardButton {text: "LShift"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 90px;}
-                KeyboardButton {text: "Z"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "X"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "C"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "V"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "B"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "N"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "M"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: ","; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "."; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "/"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "RShift"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 90px;}
+                KeyboardButton {lang: root.lang; text: "Shift"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false; width: 90px;}
+                KeyboardButton {lang: root.lang; text: "Z"; rutext: "Я"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "X"; rutext: "Ч"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "C"; rutext: "С"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "V"; rutext: "М"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "B"; rutext: "И"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "N"; rutext: "Т"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "M"; rutext: "Ь"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: ","; rutext: "Б"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "."; rutext: "Ю"; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "/"; rutext: "."; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "Shift"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false; width: 90px;}
             }
             HorizontalLayout {
                 spacing: 5px;
 
-                KeyboardButton {text: "LCtrl"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 64px;}
-                KeyboardButton {text: "Fn"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "Win"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false;}
-                KeyboardButton {text: "LAlt"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 64px;}
-                KeyboardButton {text: "Space"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 205px;}
-                KeyboardButton {text: "RAlt"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 64px;}
-                KeyboardButton {text: "RCtrl"; bcolor: white; is_pressed: (self.text == keyboard_event) ? true:false; width: 64px;}
+                KeyboardButton {lang: root.lang; text: "LCtrl"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false; width: 64px;}
+                KeyboardButton {lang: root.lang; text: "Fn"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "Win"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false;}
+                KeyboardButton {lang: root.lang; text: "LAlt"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false; width: 64px;}
+                KeyboardButton {lang: root.lang; text: "Space"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false; width: 205px;}
+                KeyboardButton {lang: root.lang; text: "RAlt"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false; width: 64px;}
+                KeyboardButton {lang: root.lang; text: "RCtrl"; rutext: ""; bcolor: white; is_pressed: (((lang == "en"|| self.rutext == "")?self.text:self.rutext)  == keyboard_event) ? true:false; width: 64px;}
             }
         }
 
@@ -253,6 +268,20 @@ export component AppWindow inherits Window {
             color: is_correct_event ? white:red;
             animate color {
                  duration: 250ms;
+            }
+        }
+
+        Button {
+            text: root.lang;
+            width: 64px;
+            x: 232px;
+            clicked => {
+                if (root.lang == "en") {
+                    root.lang = "ru";
+                } else {
+                    root.lang = "en";
+                }
+                change_lang()
             }
         }
         
