@@ -8,12 +8,10 @@ use std::str;
 
 pub fn run() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
-    let cui = ui.clone_strong();
-    let sui = ui.clone_strong();
 
     start_app();
-    char_mode(cui);
-    sentence_mode(sui);
+    char_mode(ui.clone_strong());
+    sentence_mode(ui.clone_strong());
 
     ui.run()
 }
@@ -37,6 +35,7 @@ fn start_app() {
 
     let mut example_file = fs::File::create("texts/en/example.txt").unwrap();
     let mut example_file2 = fs::File::create("texts/en/example2.txt").unwrap();
+    let mut example_file3 = fs::File::create("texts/ru/example.txt").unwrap();
 
     example_file.write_all("It is example sentence.
 I love programming and learning.
@@ -45,14 +44,19 @@ Rust is very interesting language!"
 
     example_file2.write_all("It's example sentence from second file!"
     .as_bytes()).unwrap();
+
+    example_file3.write_all("Привет, друг!
+Просто пример сообщения для режима предложений на русском языке."
+    .as_bytes()).unwrap();
 }
+
 
 fn char_mode(ui: AppWindow) {
     
     let mut count_correct:i32 = 0;
     let mut count_incorrect:i32 = 0;
 
-    ui.set_char(rand_char().into());
+    ui.set_char(rand_char(&ui).into());
 
     ui.on_key_accept({
         let ui_handle = ui.as_weak();
@@ -62,7 +66,7 @@ fn char_mode(ui: AppWindow) {
             if ui.get_event() == ui.get_char() {
                 count_correct += 1;
 
-                ui.set_char(rand_char().into());
+                ui.set_char(rand_char(&ui).into());
                 ui.set_is_correct_event(true);
 
             } else if ui.get_event() == "Shift" {
@@ -76,15 +80,19 @@ fn char_mode(ui: AppWindow) {
             ui.set_count_incorrect(count_incorrect);
 
             if !ui.get_is_char_mode() {
-                count_correct = 0;
-                count_incorrect = 0;
-                ui.set_count_correct(count_correct);
-                ui.set_count_incorrect(count_incorrect);
-                ui.set_char(rand_char().into());
+                reset_char_mode(&ui, &mut count_correct, &mut count_incorrect);
             }
         }
     });
 
+}
+
+fn reset_char_mode(ui: &AppWindow, count_correct: &mut i32, count_incorrect: &mut i32) {
+    *count_correct = 0;
+    *count_incorrect = 0;
+    ui.set_count_correct(*count_correct);
+    ui.set_count_incorrect(*count_incorrect);
+    ui.set_char(rand_char(&ui).into());
 }
 
 fn sentence_mode(ui: AppWindow) {
@@ -94,7 +102,7 @@ fn sentence_mode(ui: AppWindow) {
 
     keyboard_visual(ui.clone_strong());
 
-    ui.set_correct_sentence(rand_sentence().into());
+    ui.set_correct_sentence(rand_sentence(&ui).into());
 
     ui.on_sentence_accept({
         let ui_handle = ui.as_weak();
@@ -109,7 +117,7 @@ fn sentence_mode(ui: AppWindow) {
                 ui.set_keyboard_event("Enter".into());
                 count_correct += 1;
                 ui.set_is_correct_sentence(true);
-                ui.set_correct_sentence(rand_sentence().into());
+                ui.set_correct_sentence(rand_sentence(&ui).into());
             } else {
                 ui.set_is_correct_sentence(false);
                 ui.set_keyboard_event("Enter".into());
@@ -120,14 +128,18 @@ fn sentence_mode(ui: AppWindow) {
             ui.set_count_incorrect(count_incorrect);
 
             if !ui.get_is_sentence_mode() {
-                count_correct = 0;
-                count_incorrect = 0;
-                ui.set_count_correct(count_correct);
-                ui.set_count_incorrect(count_incorrect);
-                ui.set_correct_sentence(rand_sentence().into());
+                reset_sentence_mode(&ui, &mut count_correct, &mut count_incorrect);
             }
         }
     })
+}
+
+fn reset_sentence_mode(ui: &AppWindow, count_correct: &mut i32, count_incorrect: &mut i32) {
+    *count_correct = 0;
+    *count_incorrect = 0;
+    ui.set_count_correct(*count_correct);
+    ui.set_count_incorrect(*count_incorrect);
+    ui.set_correct_sentence(rand_sentence(&ui).into());
 }
 
 fn keyboard_visual(ui: AppWindow) {
@@ -158,11 +170,20 @@ fn keyboard_visual(ui: AppWindow) {
     })
 }
 
-fn rand_char() -> String {
+fn rand_char(ui: &AppWindow) -> String {
     let en_chars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
                                 "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+    let ru_chars = ["а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м", "н", "о", "п",
+                                "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ", "ы", "ь", "э", "ю", "я"];
 
-    let ch = en_chars[thread_rng().gen_range(0..26)];
+    let ch:&str;
+    let lang:String = ui.get_lang().parse().unwrap();
+
+    if lang == "en" {
+        ch = en_chars[thread_rng().gen_range(0..26)];
+    } else {
+        ch = ru_chars[thread_rng().gen_range(0..31)];
+    }
 
     let ch = match thread_rng().gen_range(0..2) {                        // case
         1 => ch.to_uppercase(),
@@ -173,22 +194,23 @@ fn rand_char() -> String {
     ch
 }
 
-fn rand_sentence() -> String {
+fn rand_sentence(ui: &AppWindow) -> String {
 
-    let en_path = "texts/en/";
+    let lang:String = ui.get_lang().parse().unwrap();
+    let path = format!("texts/{}/", lang);
     let mut texts = Vec::new();
 
-    match fs::read_dir(en_path) {
+    match fs::read_dir(path.clone()) {
         Err(why) => println!("! {:?}", why.kind()),
-        Ok(paths) => for path in paths {
-            texts.extend(path)
+        Ok(paths) => for p in paths {
+            texts.extend(p)
         },
     }
 
     let file = &texts[thread_rng().gen_range(0..texts.len())];
-    let path:String = format!("{}{}", en_path, file.file_name().into_string().unwrap());
+    let p:String = format!("{}{}", path, file.file_name().into_string().unwrap());
 
-    let sentences = fs::read_to_string(path).unwrap();
+    let sentences = fs::read_to_string(p).unwrap();
     let sentences:Vec<&str> = sentences.split("\n").collect();
 
     let sentence = sentences[thread_rng().gen_range(0..sentences.len())];
