@@ -58,6 +58,15 @@ fn char_mode(ui: AppWindow) {
 
     ui.set_char(rand_char(&ui).into());
 
+    ui.on_change_lang({
+        let ui_handle = ui.as_weak();
+
+        move || {
+            let ui = ui_handle.unwrap();
+            ui.set_char(rand_char(&ui).into());
+        }
+    });
+
     ui.on_key_accept({
         let ui_handle = ui.as_weak();
         move || {
@@ -103,6 +112,15 @@ fn sentence_mode(ui: AppWindow) {
     keyboard_visual(ui.clone_strong());
 
     ui.set_correct_sentence(rand_sentence(&ui).into());
+
+    ui.on_change_lang({
+        let ui_handle = ui.as_weak();
+
+        move || {
+            let ui = ui_handle.unwrap();
+            ui.set_correct_sentence(rand_sentence(&ui).into());
+        }
+    });
 
     ui.on_sentence_accept({
         let ui_handle = ui.as_weak();
